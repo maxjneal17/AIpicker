@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# local env — NEVER commit this, it has your API key
+.env.local
+.env
+
+# Next.js build output
+/.next/
+/out/
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
