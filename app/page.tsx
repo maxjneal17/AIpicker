@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import ResultCard from "@/components/ResultCard";
-import { RecommendationResult } from "@/lib/types";
+import { RecommendationResult, Stage } from "@/lib/types";
 import { EXAMPLE_CHIPS } from "@/lib/tools";
 
 type Status = "idle" | "loading" | "done" | "error";
@@ -140,15 +140,55 @@ export default function Home() {
               Recommendations for: &ldquo;{result.query_summary}&rdquo;
             </div>
 
-            <div className="flex flex-col gap-3 mb-4">
-              {result.recommendations.map((rec, i) => (
-                <ResultCard key={rec.tool} rec={rec} rank={i + 1} />
-              ))}
-            </div>
+            {/* Workflow overview (the plan) */}
+            {result.mode === "workflow" && result.overview && (
+              <div className="rounded-lg bg-purple-50 border border-purple-100 px-4 py-3 text-sm text-purple-900 leading-relaxed mb-6">
+                <span className="font-medium">The plan: </span>
+                {result.overview}
+              </div>
+            )}
+
+            {result.mode === "single" ? (
+              /* Single task: flat list of cards, like before */
+              <div className="flex flex-col gap-3 mb-4">
+                {result.stages[0]?.recommendations.map((rec, i) => (
+                  <ResultCard key={rec.tool} rec={rec} rank={i + 1} />
+                ))}
+              </div>
+            ) : (
+              /* Workflow: numbered vertical timeline of stages */
+              <div className="flex flex-col gap-6 mb-4">
+                {result.stages.map((stage: Stage, sIndex: number) => (
+                  <div key={stage.name} className="relative">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="flex-shrink-0 w-7 h-7 rounded-full bg-purple-800 text-purple-50 text-sm font-medium flex items-center justify-center">
+                        {sIndex + 1}
+                      </span>
+                      <h2 className="text-base font-medium text-gray-900">
+                        {stage.name}
+                      </h2>
+                    </div>
+                    <p className="text-sm text-gray-500 leading-relaxed mb-3 ml-10">
+                      {stage.description}
+                    </p>
+                    <div className="flex flex-col gap-3 ml-10">
+                      {stage.recommendations.map((rec, i) => (
+                        <ResultCard key={rec.tool} rec={rec} rank={i + 1} />
+                      ))}
+                    </div>
+                    {stage.handoff && (
+                      <div className="ml-10 mt-3 text-sm text-gray-400 italic border-l-2 border-gray-200 pl-3">
+                        &darr; {stage.handoff}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Caveat */}
             {result.caveat && (
-              <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-500 leading-relaxed">
+              <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-500 leading-relaxed mt-2">
                 💡 {result.caveat}
               </div>
             )}
