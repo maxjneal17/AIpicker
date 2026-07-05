@@ -8,8 +8,17 @@ export interface Recommendation {
   tags: string[];
 }
 
+export interface Stage {
+  name: string;
+  description: string;
+  handoff: string | null;
+  recommendations: Recommendation[];
+}
+
 export interface RecommendationResult {
   query_summary: string;
-  recommendations: Recommendation[];
+  mode: "single" | "workflow";
+  overview: string | null;
+  stages: Stage[];
   caveat: string | null;
 }
