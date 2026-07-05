@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     const message = await client.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 1024,
+      max_tokens: 4096,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: task.trim() }],
     });
@@ -32,6 +32,14 @@ export async function POST(req: NextRequest) {
 
     const clean = raw.replace(/```json|```/g, "").trim();
     const result: RecommendationResult = JSON.parse(clean);
+
+    if (
+      (result.mode !== "single" && result.mode !== "workflow") ||
+      !Array.isArray(result.stages) ||
+      result.stages.length === 0
+    ) {
+      throw new Error("Malformed recommendation payload");
+    }
 
     return NextResponse.json(result);
   } catch (error) {
