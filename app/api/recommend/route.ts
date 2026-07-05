@@ -36,16 +36,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error("Recommend API error:", error);
-    // TEMPORARY DEBUG: surface the real error so we can diagnose the 500.
-    // Revert this to a generic message once the root cause is found.
-    const detail =
-      error instanceof Error ? error.message : JSON.stringify(error);
-    const status =
-      typeof error === "object" && error !== null && "status" in error
-        ? (error as { status?: number }).status
-        : undefined;
     return NextResponse.json(
-      { error: "Failed to get recommendation", detail, apiStatus: status },
+      { error: "Failed to get recommendation" },
       { status: 500 }
     );
   }
