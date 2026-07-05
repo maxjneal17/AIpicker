@@ -15,3 +15,9 @@ node_modules/
 .DS_Store
 *.pem
 npm-debug.log*
+
+# internal scratch — not part of the app (specs/ and plans/ stay tracked)
+.claude/
+.superpowers/
+docs/superpowers/reports/
+docs/superpowers/reviews/
